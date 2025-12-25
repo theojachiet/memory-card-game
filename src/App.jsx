@@ -5,21 +5,41 @@ import './App.css'
 
 function App() {
 
+  let offset;
+
+  function handleRefresh() {
+    console.log('click');
+    offset = Math.floor(Math.random() * (100 - 0 + 1))
+  }
+
   return (
     <>
-      <PokeList />
+      <button onClick={handleRefresh}>Refresh</button>
+      <PokeList offset={offset} />
     </>
   )
 }
 
-function PokeList() {
-  let offset = Math.floor(Math.random() * (100 - 0 + 1))
+function PokeList({ offset }) {
+  let presentationArray = [];
   fetch(`https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`)
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
     .then(function (response) {
-      response.results.map(r => console.log(r.name))
+      response.results.map(r => presentationArray.push(r.name))
+    })
+    .then(function (response) {
+      const listItems = presentationArray.map(pokemon =>
+        <li key={pokemon}>pokemon</li>
+      )
+    })
+    .then(function (response) {
+      return (
+        <ul>
+          {listItems}
+        </ul>
+      )
     })
 }
 
