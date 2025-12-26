@@ -12,10 +12,10 @@ function App() {
   }
 
   return (
-    <>
+    <section>
       <button onClick={handleRefresh}>Refresh</button>
       <PokeList offset={offset} />
-    </>
+    </section>
   )
 }
 
@@ -24,7 +24,7 @@ function PokeList({ offset }) {
   const [pokemons, setPokemons] = useState([]);
 
   useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`)
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${offset}`)
       .then(res => res.json())
       .then(data => {
         setPokemons(data.results.map(p => p.name));
