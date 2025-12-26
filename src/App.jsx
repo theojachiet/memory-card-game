@@ -34,9 +34,15 @@ function PokeList({ offset }) {
   return (
     <ul>
       {pokemons.map(pokemon => (
-        <li key={pokemon}>{pokemon}</li>
+        <Card name={pokemon} key={pokemon}/>
       ))}
     </ul>
+  )
+}
+
+function Card({name}) {
+  return (
+    <li>{name}</li>
   )
 }
 
