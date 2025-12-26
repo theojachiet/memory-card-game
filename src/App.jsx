@@ -7,14 +7,15 @@ function App() {
 
   const [offset, setOffset] = useState(0);
 
-  function handleRefresh() {
+  function handleRestart() {
     setOffset(Math.floor(Math.random() * 101));
   }
 
   return (
     <section>
-      <button onClick={handleRefresh}>Refresh</button>
+      <h1>Memory Cards</h1>
       <PokeList offset={offset} />
+      <button onClick={handleRestart}>Restart Game</button>
     </section>
   )
 }
