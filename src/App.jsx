@@ -1,15 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
 
-  let offset;
+  const [offset, setOffset] = useState(0);
 
   function handleRefresh() {
-    console.log('click');
-    offset = Math.floor(Math.random() * (100 - 0 + 1))
+    setOffset(Math.floor(Math.random() * 101));
   }
 
   return (
@@ -21,26 +20,24 @@ function App() {
 }
 
 function PokeList({ offset }) {
-  let presentationArray = [];
-  fetch(`https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (response) {
-      response.results.map(r => presentationArray.push(r.name))
-    })
-    .then(function (response) {
-      const listItems = presentationArray.map(pokemon =>
-        <li key={pokemon}>pokemon</li>
-      )
-    })
-    .then(function (response) {
-      return (
-        <ul>
-          {listItems}
-        </ul>
-      )
-    })
+
+  const [pokemons, setPokemons] = useState([]);
+
+  useEffect(() => {
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`)
+      .then(res => res.json())
+      .then(data => {
+        setPokemons(data.results.map(p => p.name));
+      })
+  }, [offset]);
+
+  return (
+    <ul>
+      {pokemons.map(pokemon => (
+        <li key={pokemon}>{pokemon}</li>
+      ))}
+    </ul>
+  )
 }
 
 export default App
