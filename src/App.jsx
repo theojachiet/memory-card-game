@@ -10,14 +10,29 @@ function App() {
   const [shuffleKey, setShuffleKey] = useState([]);
 
   useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon?limit=40&offset=${offset}`)
-      .then(res => res.json())
-      .then(data => {
-        setPokemons(data.results.map(p => p.name));
-      })
+    async function fetchPokemons() {
+      const result = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=40&offset=${offset}`);
+      const data = await result.json();
+
+      const detailedPokemons = await Promise.all(
+        data.results.map(async (pokemon) => {
+          const result = await fetch(pokemon.url);
+          const details = await result.json();
+
+          return {
+            id: details.id,
+            name: details.name,
+            image: details.sprites.other["official-artwork"].front_default
+          };
+        })
+      )
+      setPokemons(detailedPokemons);
+    }
+    fetchPokemons();
   }, [offset])
 
   function handleShuffle() {
+    console.log('shuffle')
     setShuffleKey(prev => prev + 1);
   }
 
@@ -28,14 +43,14 @@ function App() {
   return (
     <section>
       <h1>Memory Cards</h1>
-      <PokeList list={pokemons} shuffleKey={shuffleKey} />
+      <PokeList list={pokemons} shuffleKey={shuffleKey} handleShuffle={handleShuffle} />
       <button onClick={handleRestart}>Restart Game</button>
       <button onClick={handleShuffle}>Shuffle</button>
     </section>
   )
 }
 
-function PokeList({ list, shuffleKey }) {
+function PokeList({ list, shuffleKey, handleShuffle }) {
 
   const [pokemonsDisplayed, setPokemonsDisplayed] = useState([]);
 
@@ -51,15 +66,18 @@ function PokeList({ list, shuffleKey }) {
   return (
     <ul>
       {pokemonsDisplayed.map(pokemon => (
-        <Card name={pokemon} key={pokemon} />
+        <Card pokemon={pokemon} key={pokemon} onClick={handleShuffle} />
       ))}
     </ul>
   )
 }
 
-function Card({ name }) {
+function Card({ pokemon, onClick }) {
   return (
-    <li>{name}</li>
+    <li onClick={onClick}>
+      <img src={pokemon.image} alt="none" />
+      <h3>{pokemon.name}</h3>
+    </li>
   )
 }
 

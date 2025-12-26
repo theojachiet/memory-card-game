@@ -37,10 +37,16 @@ li {
   border: 1px solid red;
   height: 200px;
   display: flex;
-  justify-content: center;
-  align-items: end;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
 
   padding: 20px;
   background-color: darkblue;
   font-size: x-large;
+}
+
+img {
+  max-width: 50px;
+  height: auto;
 }
