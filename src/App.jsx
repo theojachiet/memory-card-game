@@ -6,6 +6,20 @@ import './App.css'
 function App() {
 
   const [offset, setOffset] = useState(0);
+  const [pokemons, setPokemons] = useState([]);
+  const [shuffleKey, setShuffleKey] = useState([]);
+
+  useEffect(() => {
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=40&offset=${offset}`)
+      .then(res => res.json())
+      .then(data => {
+        setPokemons(data.results.map(p => p.name));
+      })
+  }, [offset])
+
+  function handleShuffle() {
+    setShuffleKey(prev => prev + 1);
+  }
 
   function handleRestart() {
     setOffset(Math.floor(Math.random() * 101));
@@ -14,34 +28,36 @@ function App() {
   return (
     <section>
       <h1>Memory Cards</h1>
-      <PokeList offset={offset} />
+      <PokeList list={pokemons} shuffleKey={shuffleKey} />
       <button onClick={handleRestart}>Restart Game</button>
+      <button onClick={handleShuffle}>Shuffle</button>
     </section>
   )
 }
 
-function PokeList({ offset }) {
+function PokeList({ list, shuffleKey }) {
 
-  const [pokemons, setPokemons] = useState([]);
+  const [pokemonsDisplayed, setPokemonsDisplayed] = useState([]);
 
   useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${offset}`)
-      .then(res => res.json())
-      .then(data => {
-        setPokemons(data.results.map(p => p.name));
-      })
-  }, [offset]);
+    if (list.length === 0) return;
+
+    const shuffled = list.sort(() => 0.5 - Math.random());
+    let selected = shuffled.slice(0, 10);
+
+    setPokemonsDisplayed(selected);
+  }, [list, shuffleKey]);
 
   return (
     <ul>
-      {pokemons.map(pokemon => (
-        <Card name={pokemon} key={pokemon}/>
+      {pokemonsDisplayed.map(pokemon => (
+        <Card name={pokemon} key={pokemon} />
       ))}
     </ul>
   )
 }
 
-function Card({name}) {
+function Card({ name }) {
   return (
     <li>{name}</li>
   )
