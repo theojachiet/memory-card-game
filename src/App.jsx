@@ -8,7 +8,7 @@ function App() {
   const [offset, setOffset] = useState(0);
   const [pokemons, setPokemons] = useState([]);
   const [shuffleKey, setShuffleKey] = useState(0);
-  const [visitedPokemons, setVisitedPokemons] = useState([]);4
+  const [visitedPokemons, setVisitedPokemons] = useState([]); 4
   const [highestScore, setHighestScore] = useState(0);
 
   useEffect(() => {
@@ -48,6 +48,8 @@ function App() {
   }
 
   function handleRestart() {
+    setShuffleKey(0);
+    setVisitedPokemons([]);
     setOffset(Math.floor(Math.random() * 101));
   }
 
@@ -58,7 +60,6 @@ function App() {
       <p>highest score : {highestScore}</p>
       <PokeList list={pokemons} shuffleKey={shuffleKey} handleShuffle={handleShuffle} />
       <button onClick={handleRestart}>Restart Game</button>
-      <button onClick={handleShuffle}>Shuffle</button>
     </section>
   )
 }
