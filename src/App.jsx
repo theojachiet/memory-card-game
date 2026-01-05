@@ -7,11 +7,12 @@ function App() {
 
   const [offset, setOffset] = useState(0);
   const [pokemons, setPokemons] = useState([]);
-  const [shuffleKey, setShuffleKey] = useState([]);
+  const [shuffleKey, setShuffleKey] = useState(0);
+  const [visitedPokemons, setVisitedPokemons] = useState([]);
 
   useEffect(() => {
     async function fetchPokemons() {
-      const result = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=40&offset=${offset}`);
+      const result = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`);
       const data = await result.json();
 
       const detailedPokemons = await Promise.all(
@@ -22,7 +23,7 @@ function App() {
           return {
             id: details.id,
             name: details.name,
-            image: details.sprites.other["official-artwork"].front_default
+            image: details.sprites.front_default
           };
         })
       )
@@ -31,9 +32,16 @@ function App() {
     fetchPokemons();
   }, [offset])
 
-  function handleShuffle() {
-    console.log('shuffle')
-    setShuffleKey(prev => prev + 1);
+  function handleShuffle(e, pokemonName) {
+    if (visitedPokemons.includes(pokemonName)) {
+      setShuffleKey(0);
+      setVisitedPokemons([]);
+    } else {
+      setVisitedPokemons([...visitedPokemons, pokemonName]);
+
+      //Change shuffle key to shuffle and increase the score
+      setShuffleKey(prev => prev + 1);
+    }
   }
 
   function handleRestart() {
@@ -43,6 +51,7 @@ function App() {
   return (
     <section>
       <h1>Memory Cards</h1>
+      <p>score : {shuffleKey}</p>
       <PokeList list={pokemons} shuffleKey={shuffleKey} handleShuffle={handleShuffle} />
       <button onClick={handleRestart}>Restart Game</button>
       <button onClick={handleShuffle}>Shuffle</button>
@@ -66,7 +75,7 @@ function PokeList({ list, shuffleKey, handleShuffle }) {
   return (
     <ul>
       {pokemonsDisplayed.map(pokemon => (
-        <Card pokemon={pokemon} key={pokemon} onClick={handleShuffle} />
+        <Card pokemon={pokemon} key={pokemon.id} onClick={(e) => handleShuffle(e, pokemon.name)} />
       ))}
     </ul>
   )
