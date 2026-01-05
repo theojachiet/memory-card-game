@@ -8,7 +8,8 @@ function App() {
   const [offset, setOffset] = useState(0);
   const [pokemons, setPokemons] = useState([]);
   const [shuffleKey, setShuffleKey] = useState(0);
-  const [visitedPokemons, setVisitedPokemons] = useState([]);
+  const [visitedPokemons, setVisitedPokemons] = useState([]);4
+  const [highestScore, setHighestScore] = useState(0);
 
   useEffect(() => {
     async function fetchPokemons() {
@@ -34,6 +35,8 @@ function App() {
 
   function handleShuffle(e, pokemonName) {
     if (visitedPokemons.includes(pokemonName)) {
+      if (shuffleKey > highestScore) setHighestScore(shuffleKey);
+
       setShuffleKey(0);
       setVisitedPokemons([]);
     } else {
@@ -52,6 +55,7 @@ function App() {
     <section>
       <h1>Memory Cards</h1>
       <p>score : {shuffleKey}</p>
+      <p>highest score : {highestScore}</p>
       <PokeList list={pokemons} shuffleKey={shuffleKey} handleShuffle={handleShuffle} />
       <button onClick={handleRestart}>Restart Game</button>
       <button onClick={handleShuffle}>Shuffle</button>
